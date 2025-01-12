@@ -1,4 +1,4 @@
-package Sum
+package calcservice
 
 import (
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"

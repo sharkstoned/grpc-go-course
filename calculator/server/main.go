@@ -6,7 +6,7 @@ import (
 	"os"
 
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"
-	sum "github.com/Clement-Jean/grpc-go-course/calculator/server/sum"
+	calcservice "github.com/Clement-Jean/grpc-go-course/calculator/server/calc-service"
 	"google.golang.org/grpc"
 )
 
@@ -22,14 +22,10 @@ func main() {
 	log.Printf("Listening at %s\n", addr)
 
 	server := grpc.NewServer()
-	registerServices(server)
+	pb.RegisterSumServiceServer(server, &calcservice.Server{})
 
 	if err = server.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 		os.Exit(1)
 	}
-}
-
-func registerServices(server *grpc.Server) {
-	pb.RegisterSumServiceServer(server, &sum.Server{})
 }
