@@ -2,21 +2,38 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
+	pb "github.com/Clement-Jean/grpc-go-course/greet/proto"
 )
 
 var addr string = "localhost:50051"
 
 func main() {
+	conn := establishGrpcConnection()
+	defer conn.Close()
+
+	greetServiceClient := pb.NewGreetServiceClient(conn)
+
+	program(greetServiceClient)
+}
+
+func establishGrpcConnection() *grpc.ClientConn {
 	transportCredentials := grpc.WithTransportCredentials(insecure.NewCredentials())
 	conn, err := grpc.NewClient(addr, transportCredentials)
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
+		os.Exit(1)
 	}
-	defer conn.Close()
 
+	return conn
+}
+
+func program(client pb.GreetServiceClient) {
+	doGreet(client)
 }
 
 // func main() {
