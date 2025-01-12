@@ -1,4 +1,4 @@
-package main
+package greetservice
 
 import pb "github.com/Clement-Jean/grpc-go-course/greet/proto"
 

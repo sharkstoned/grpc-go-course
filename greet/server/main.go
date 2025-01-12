@@ -8,6 +8,7 @@ import (
 	"net"
 
 	pb "github.com/Clement-Jean/grpc-go-course/greet/proto"
+	greetservice "github.com/Clement-Jean/grpc-go-course/greet/server/greet-service"
 	"google.golang.org/grpc"
 )
 
@@ -64,7 +65,7 @@ func main() {
 	s := grpc.NewServer()
 	// Server{} is a collection of endpoints defined with protobuf
 	// At this point we bind together grpc server s with the endpoints definition
-	pb.RegisterGreetServiceServer(s, &Server{})
+	pb.RegisterGreetServiceServer(s, &greetservice.Server{})
 
 	// Make grpc server listen on tcp via the listener
 	if err = s.Serve(lis); err != nil {
