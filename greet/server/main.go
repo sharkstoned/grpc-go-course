@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 
+	pb "github.com/Clement-Jean/grpc-go-course/greet/proto"
 	"google.golang.org/grpc"
 )
 
@@ -50,6 +51,7 @@ var addr string = "0.0.0.0:50051"
 // }
 
 func main() {
+	// Create a tcp listener
 	lis, err := net.Listen("tcp", addr)
 
 	if err != nil {
@@ -60,7 +62,11 @@ func main() {
 	log.Printf("Listening at %s\n", addr)
 
 	s := grpc.NewServer()
+	// Server{} is a collection of endpoints defined with protobuf
+	// At this point we bind together grpc server s with the endpoints definition
+	pb.RegisterGreetServiceServer(s, &Server{})
 
+	// Make grpc server listen on tcp via the listener
 	if err = s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 	}
