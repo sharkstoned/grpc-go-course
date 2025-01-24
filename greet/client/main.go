@@ -34,6 +34,7 @@ func establishGrpcConnection() *grpc.ClientConn {
 
 func program(client pb.GreetServiceClient) {
 	doGreet(client)
+	doGreetManyTimes(client)
 }
 
 // func main() {
