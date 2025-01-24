@@ -13,6 +13,18 @@ message SumResponse {
   int32 sum = 1;
 }
 
+message PrimesRequest {
+  int32 input = 1;
+}
+
+message PrimesResponse {
+  int32 factor = 1;
+}
+
 service SumService {
   rpc Sum (SumRequest) returns (SumResponse);
+}
+
+service PrimesService {
+  rpc Primes (PrimesRequest) returns (stream PrimesResponse);
 }

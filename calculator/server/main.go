@@ -22,7 +22,9 @@ func main() {
 	log.Printf("Listening at %s\n", addr)
 
 	server := grpc.NewServer()
-	pb.RegisterSumServiceServer(server, &calcservice.Server{})
+	serverInstance := &calcservice.Server{}
+	pb.RegisterSumServiceServer(server, serverInstance)
+	pb.RegisterPrimesServiceServer(server, serverInstance)
 
 	if err = server.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
 	"os"
 
@@ -18,6 +19,7 @@ func main() {
 	defer conn.Close()
 
 	sumServiceClient := pb.NewSumServiceClient(conn)
+	primesServiceClient := pb.NewPrimesServiceClient(conn)
 
 	sumResp, err := sumServiceClient.Sum(
 		context.Background(),
@@ -28,6 +30,26 @@ func main() {
 	}
 
 	log.Printf("Sum: %d", sumResp.Sum)
+
+	// ---
+
+	primesStream, err := primesServiceClient.Primes(context.Background(), &pb.PrimesRequest{Input: 120})
+	if err != nil {
+		log.Printf("Failed to acquire primes stream: %v", err)
+	}
+	for {
+		result, err := primesStream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("Failed to get value from primes stream: %v", err)
+			break
+		}
+
+		// todo: fails
+		log.Println(result.Factor)
+	}
 
 }
 

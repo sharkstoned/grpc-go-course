@@ -6,4 +6,5 @@ import (
 
 type Server struct {
 	pb.SumServiceServer
+	pb.PrimesServiceServer
 }
