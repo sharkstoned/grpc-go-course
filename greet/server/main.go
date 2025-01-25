@@ -10,11 +10,13 @@ import (
 	pb "github.com/Clement-Jean/grpc-go-course/greet/proto"
 	greetservice "github.com/Clement-Jean/grpc-go-course/greet/server/greet-service"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 // var greetWithDeadlineTime time.Duration = 1 * time.Second
 
-var addr string = "0.0.0.0:50051"
+var addr = "0.0.0.0:50051"
+var tls = true
 
 // func main() {
 // 	lis, err := net.Listen("tcp", addr)
@@ -62,7 +64,17 @@ func main() {
 	defer lis.Close()
 	log.Printf("Listening at %s\n", addr)
 
-	s := grpc.NewServer()
+	serverOpts := []grpc.ServerOption{}
+	if tls {
+		creds, err := credentials.NewServerTLSFromFile("ssl/server.crt", "ssl/server.pem")
+		if err != nil {
+			log.Fatalf("Failed to load tls cert %v\n", err)
+		}
+
+		serverOpts = append(serverOpts, grpc.Creds(creds))
+	}
+
+	s := grpc.NewServer(serverOpts...)
 	// Server{} is a collection of endpoints defined with protobuf
 	// At this point we bind together grpc server s with the endpoints definition
 	pb.RegisterGreetServiceServer(s, &greetservice.Server{})
