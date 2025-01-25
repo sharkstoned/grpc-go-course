@@ -13,6 +13,12 @@ message SumResponse {
   int32 sum = 1;
 }
 
+service SumService {
+  rpc Sum (SumRequest) returns (SumResponse);
+}
+
+// ---
+
 message PrimesRequest {
   int32 input = 1;
 }
@@ -21,10 +27,20 @@ message PrimesResponse {
   int32 factor = 1;
 }
 
-service SumService {
-  rpc Sum (SumRequest) returns (SumResponse);
-}
-
 service PrimesService {
   rpc Primes (PrimesRequest) returns (stream PrimesResponse);
+}
+
+// ---
+
+message AvgRequest {
+  int64 input = 1;
+}
+
+message AvgResponse {
+  float avg = 1;
+}
+
+service AvgService {
+  rpc Avg (stream AvgRequest) returns (AvgResponse);
 }

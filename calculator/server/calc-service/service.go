@@ -2,6 +2,7 @@ package calcservice
 
 import (
 	"context"
+	"io"
 	"log"
 
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"
@@ -29,6 +30,31 @@ func (*Server) Primes(req *pb.PrimesRequest, stream grpc.ServerStreamingServer[p
 		}
 
 		divider++
+	}
+
+	return nil
+}
+
+func (*Server) Avg(stream grpc.ClientStreamingServer[pb.AvgRequest, pb.AvgResponse]) error {
+	log.Println("Avg endpoint hit")
+
+	var sum int64
+	var operandsQty int64
+
+	for {
+		val, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&pb.AvgResponse{
+				Avg: float32(sum) / float32(operandsQty),
+			})
+		}
+		if err != nil {
+			log.Printf("Failed to get avg stream input value: %v", err)
+			break
+		}
+
+		sum += val.Input
+		operandsQty++
 	}
 
 	return nil

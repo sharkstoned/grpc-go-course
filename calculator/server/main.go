@@ -25,6 +25,7 @@ func main() {
 	serverInstance := &calcservice.Server{}
 	pb.RegisterSumServiceServer(server, serverInstance)
 	pb.RegisterPrimesServiceServer(server, serverInstance)
+	pb.RegisterAvgServiceServer(server, serverInstance)
 
 	if err = server.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)

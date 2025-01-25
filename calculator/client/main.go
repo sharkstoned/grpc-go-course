@@ -20,6 +20,7 @@ func main() {
 
 	sumServiceClient := pb.NewSumServiceClient(conn)
 	primesServiceClient := pb.NewPrimesServiceClient(conn)
+	avgServiceClient := pb.NewAvgServiceClient(conn)
 
 	sumResp, err := sumServiceClient.Sum(
 		context.Background(),
@@ -27,6 +28,7 @@ func main() {
 	)
 	if err != nil {
 		log.Printf("Request failed - sum(): %v", err)
+		return
 	}
 
 	log.Printf("Sum: %d", sumResp.Sum)
@@ -47,10 +49,33 @@ func main() {
 			break
 		}
 
-		// todo: fails
 		log.Println(result.Factor)
 	}
 
+	// ---
+
+	stream, err := avgServiceClient.Avg(context.Background())
+	if err != nil {
+		log.Printf("Failed to acquire avg stream: %v", err)
+	}
+	for _, operand := range []int64{5, 12, 43, 6} {
+		log.Printf("Sending operand %d to avg\n", operand)
+		err := stream.Send(&pb.AvgRequest{
+			Input: operand,
+		})
+		if err != nil {
+			log.Printf("Failed to send operand to avg: %v", err)
+			return
+		}
+	}
+
+	avgResult, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Printf("Failed to get avg result: %v", err)
+		return
+	}
+
+	log.Printf("Avg: %f", avgResult.Avg)
 }
 
 func establishConnection() *grpc.ClientConn {
