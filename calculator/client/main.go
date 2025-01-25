@@ -19,13 +19,15 @@ func main() {
 	// sumServiceClient := pb.NewSumServiceClient(conn)
 	// primesServiceClient := pb.NewPrimesServiceClient(conn)
 	// avgServiceClient := pb.NewAvgServiceClient(conn)
-	maxServiceClient := pb.NewMaxServiceClient(conn)
+	// maxServiceClient := pb.NewMaxServiceClient(conn)
+	sqrtServiceClient := pb.NewSqrtServiceClient(conn)
 
 	// getSum(sumServiceClient)
 	// getPrimes(primesServiceClient)
 	// getAverage(avgServiceClient)
-	getMaxSync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
-	getMaxAsync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
+	// getMaxSync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
+	// getMaxAsync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
+	getSqrt(sqrtServiceClient, 712)
 }
 
 func establishConnection() *grpc.ClientConn {

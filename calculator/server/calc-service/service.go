@@ -2,13 +2,17 @@ package calcservice
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
+	"math"
 	"math/rand"
 	"time"
 
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"
 	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (*Server) Sum(ctx context.Context, req *pb.SumRequest) (*pb.SumResponse, error) {
@@ -92,4 +96,17 @@ func (*Server) Max(stream grpc.BidiStreamingServer[pb.MaxRequest, pb.MaxResponse
 			log.Printf("Failed to send Max value: %v", err)
 		}
 	}
+}
+
+func (*Server) Sqrt(ctx context.Context, req *pb.SqrtRequest) (*pb.SqrtResponse, error) {
+	if req.Input < 0 {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			fmt.Sprintf("Received negative argument: %d", req.Input),
+		)
+	}
+
+	return &pb.SqrtResponse{
+		Result: math.Sqrt(float64(req.Input)),
+	}, nil
 }

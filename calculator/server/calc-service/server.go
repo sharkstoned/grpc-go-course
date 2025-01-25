@@ -9,4 +9,5 @@ type Server struct {
 	pb.PrimesServiceServer
 	pb.AvgServiceServer
 	pb.MaxServiceServer
+	pb.SqrtServiceServer
 }

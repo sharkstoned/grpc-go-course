@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "github.com/Clement-Jean/grpc-go-course/calculator/proto";
+
+message SqrtRequest {
+  int32 input = 1;
+}
+
+message SqrtResponse {
+  double result = 1;
+}
+
+service SqrtService {
+  rpc Sqrt (SqrtRequest) returns (SqrtResponse);
+}

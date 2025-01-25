@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"
+	"google.golang.org/grpc/status"
 )
 
 func getSum(client pb.SumServiceClient) {
@@ -124,4 +125,19 @@ func getMaxAsync(client pb.MaxServiceClient, inputValues []int32) {
 	}()
 
 	<-waitChannel
+}
+
+func getSqrt(client pb.SqrtServiceClient, num int32) {
+	result, err := client.Sqrt(context.Background(), &pb.SqrtRequest{Input: num})
+	if err != nil {
+		parsedErr, ok := status.FromError(err)
+		if ok {
+			log.Printf("Server responded with an error: %+v", parsedErr)
+		} else {
+			// non-grpc error
+			log.Fatalf("Generic error: %v", err)
+		}
+	}
+
+	log.Printf("Sqrt of %d is %f", num, result.Result)
 }
