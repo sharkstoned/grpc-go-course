@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"io"
 	"log"
 	"os"
 
@@ -18,64 +16,16 @@ func main() {
 	conn := establishConnection()
 	defer conn.Close()
 
-	sumServiceClient := pb.NewSumServiceClient(conn)
-	primesServiceClient := pb.NewPrimesServiceClient(conn)
-	avgServiceClient := pb.NewAvgServiceClient(conn)
+	// sumServiceClient := pb.NewSumServiceClient(conn)
+	// primesServiceClient := pb.NewPrimesServiceClient(conn)
+	// avgServiceClient := pb.NewAvgServiceClient(conn)
+	maxServiceClient := pb.NewMaxServiceClient(conn)
 
-	sumResp, err := sumServiceClient.Sum(
-		context.Background(),
-		&pb.SumRequest{A: 3, B: 5},
-	)
-	if err != nil {
-		log.Printf("Request failed - sum(): %v", err)
-		return
-	}
-
-	log.Printf("Sum: %d", sumResp.Sum)
-
-	// ---
-
-	primesStream, err := primesServiceClient.Primes(context.Background(), &pb.PrimesRequest{Input: 120})
-	if err != nil {
-		log.Printf("Failed to acquire primes stream: %v", err)
-	}
-	for {
-		result, err := primesStream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Printf("Failed to get value from primes stream: %v", err)
-			break
-		}
-
-		log.Println(result.Factor)
-	}
-
-	// ---
-
-	stream, err := avgServiceClient.Avg(context.Background())
-	if err != nil {
-		log.Printf("Failed to acquire avg stream: %v", err)
-	}
-	for _, operand := range []int64{5, 12, 43, 6} {
-		log.Printf("Sending operand %d to avg\n", operand)
-		err := stream.Send(&pb.AvgRequest{
-			Input: operand,
-		})
-		if err != nil {
-			log.Printf("Failed to send operand to avg: %v", err)
-			return
-		}
-	}
-
-	avgResult, err := stream.CloseAndRecv()
-	if err != nil {
-		log.Printf("Failed to get avg result: %v", err)
-		return
-	}
-
-	log.Printf("Avg: %f", avgResult.Avg)
+	// getSum(sumServiceClient)
+	// getPrimes(primesServiceClient)
+	// getAverage(avgServiceClient)
+	getMaxSync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
+	getMaxAsync(maxServiceClient, []int32{-5, -7, 13, 13, 17})
 }
 
 func establishConnection() *grpc.ClientConn {

@@ -21,13 +21,14 @@ func main() {
 	defer listener.Close()
 	log.Printf("Listening at %s\n", addr)
 
-	server := grpc.NewServer()
-	serverInstance := &calcservice.Server{}
-	pb.RegisterSumServiceServer(server, serverInstance)
-	pb.RegisterPrimesServiceServer(server, serverInstance)
-	pb.RegisterAvgServiceServer(server, serverInstance)
+	grpcServer := grpc.NewServer()
+	appServer := &calcservice.Server{}
+	pb.RegisterSumServiceServer(grpcServer, appServer)
+	pb.RegisterPrimesServiceServer(grpcServer, appServer)
+	pb.RegisterAvgServiceServer(grpcServer, appServer)
+	pb.RegisterMaxServiceServer(grpcServer, appServer)
 
-	if err = server.Serve(listener); err != nil {
+	if err = grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 		os.Exit(1)
 	}

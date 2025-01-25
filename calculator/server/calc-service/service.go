@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"log"
+	"math/rand"
+	"time"
 
 	pb "github.com/Clement-Jean/grpc-go-course/calculator/proto"
 	grpc "google.golang.org/grpc"
@@ -58,4 +60,36 @@ func (*Server) Avg(stream grpc.ClientStreamingServer[pb.AvgRequest, pb.AvgRespon
 	}
 
 	return nil
+}
+
+func (*Server) Max(stream grpc.BidiStreamingServer[pb.MaxRequest, pb.MaxResponse]) error {
+	log.Println("Max endpoint hit")
+
+	var currentMax int32 = 0
+	firstValIsReceived := false
+
+	for {
+		nextVal, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			log.Printf("Failed to get nextVal from Max stream: %v", err)
+		}
+
+		if !firstValIsReceived {
+			currentMax = nextVal.Input
+			firstValIsReceived = true
+		} else {
+			if currentMax < nextVal.Input {
+				currentMax = nextVal.Input
+			}
+		}
+
+		time.Sleep(time.Duration(rand.Intn(101)) * time.Millisecond)
+		err = stream.Send(&pb.MaxResponse{Max: currentMax})
+		if err != nil {
+			log.Printf("Failed to send Max value: %v", err)
+		}
+	}
 }
